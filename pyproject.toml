@@ -1,0 +1,13 @@
+[project]
+name = "voice-assistant"
+version = "0.1.0"
+description = "An example voice assistant using LiveKit, OpenAI, and AssemblyAI"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "livekit-plugins-assemblyai>=1.2.1",
+    "livekit-plugins-noise-cancellation>=0.2.5",
+    "livekit-plugins-openai>=1.2.1",
+    "livekit-plugins-silero>=1.2.1",
+    "python-dotenv>=1.1.1",
+]
