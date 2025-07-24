@@ -1,6 +1,6 @@
 # Voice Assistant
 
-This is an example voice assistant using [LiveKit](https://www.livekit.io/), [AssemblyAI](https://www.assemblyai.com/), and [OpenAI](https://www.openai.com/).
+This is an example voice assistant using [LiveKit](https://www.livekit.io/), [AssemblyAI](http://bit.ly/46oN8MT), and [OpenAI](https://www.openai.com/).
 
 To set up the project, create a file `.env` in the root directory with the following environment variables:
 
