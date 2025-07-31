@@ -1,9 +1,11 @@
 from dotenv import load_dotenv
+import os
 from livekit import agents
 from livekit.agents import Agent, AgentSession, RoomInputOptions, tokenize
 from livekit.plugins import (
     assemblyai,
     noise_cancellation,
+    groq,
     openai,
     silero,
 )
@@ -16,11 +18,29 @@ class Assistant(Agent):
         super().__init__(instructions="You are a helpful voice AI assistant.")
 
 
+def get_llm_provider(provider: str):
+    """Get LLM provider based on user choice"""
+    if provider.lower() == "groq":
+        return groq.LLM(model="llama3-8b-8192")
+    else:  # default to openai
+        return openai.LLM(model="gpt-4o-mini")
+
+
+def get_tts_provider(provider: str):
+    """Get TTS provider based on user choice"""
+    if provider.lower() == "groq":
+        return groq.TTS()
+    else:  # default to openai
+        return openai.TTS(voice="alloy")
+
+
 async def entrypoint(ctx: agents.JobContext):
-    # We'll use OpenAI's Text To Speech (TTS) servive to transform text
-    # into the assistant's voice.
+    # Get provider from environment variable or use default
+    provider = os.getenv("PROVIDER", "openai").lower()
+    
+    # We'll use the selected provider's Text To Speech (TTS) service
     tts = agents.tts.StreamAdapter(
-        tts=openai.TTS(voice="alloy"),
+        tts=get_tts_provider(provider),
         sentence_tokenizer=tokenize.basic.SentenceTokenizer(),
     )
 
@@ -36,9 +56,8 @@ async def entrypoint(ctx: agents.JobContext):
     # whether an audio signal contains human speech or not.
     vad = silero.VAD.load()
 
-    # We'll use OpenAI's GPT-4o-mini as the assistant that will drive the
-    # conversation.
-    llm = openai.LLM(model="gpt-4o-mini")
+    # We'll use the selected provider's LLM as the assistant
+    llm = get_llm_provider(provider)
 
     # We'll use AssemblyAI's turn detection capabilities to determine when
     # we stop speaking and it's the assistant's turn.
